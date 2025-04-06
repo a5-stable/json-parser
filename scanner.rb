@@ -23,14 +23,14 @@ class Scanner
   end
 
   def scan_token
-    current_token = fetch_current_token
+    current_token = fetch_current_letter
     @current_index += 1
 
     case current_token
     when "{"
-      add_token(TokenType::LEFT_PAREN)
+      add_token(TokenType::LEFT_BRACKET)
     when "}"
-      add_token(TokenType::RIGHT_PAREN)
+      add_token(TokenType::RIGHT_BRACKET)
     when ":"
       add_token(TokenType::COLON)
     when ","
@@ -49,17 +49,17 @@ class Scanner
 
   def consume_string
     literal = ''
-    current_letter = fetch_current_token
+    current_letter = fetch_current_letter
 
     while current_letter != '"'
       if (is_end)
         raise "unfinished string literal"
       end
-      current_letter = fetch_current_token
+      current_letter = fetch_current_letter
       literal += current_letter
       @current_index += 1
 
-      current_letter = fetch_current_token
+      current_letter = fetch_current_letter
     end
 
     # consume last double quotation
@@ -69,10 +69,10 @@ class Scanner
   end
 
   def consume_number
-    current_letter = fetch_current_token
+    current_letter = fetch_current_letter
 
     while is_number?(current_letter)
-      current_letter = fetch_current_token
+      current_letter = fetch_current_letter
       @current_index += 1
     end
     literal = fetch_substring(start_index, current_index)
@@ -84,7 +84,7 @@ class Scanner
     @tokens << Token.new(type, lexeme, literal)
   end
 
-  def fetch_current_token
+  def fetch_current_letter
     json_string[current_index]
   end
 
