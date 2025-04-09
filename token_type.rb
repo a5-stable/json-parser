@@ -8,4 +8,6 @@ module TokenType
   # literal
   STRING = :STRING
   NUMBER = :NUMBER
+  NULL = :NULL
+  BOOLEAN = :BOOLEAN
 end

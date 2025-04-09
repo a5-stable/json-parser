@@ -25,7 +25,6 @@ class Parser
         pairs << consume_pair
 
         if !match_without_consume(TokenType::COMMA) && is_json_expression_continuing?
-          binding.irb
           raise "Expect COMMA!"
         else
           consume_tokens_if_match(TokenType::COMMA)
@@ -58,7 +57,7 @@ class Parser
       return consume_json_expression
     end
 
-    if match_without_consume([TokenType::STRING, TokenType::NUMBER])
+    if match_without_consume([TokenType::STRING, TokenType::NUMBER, TokenType::NULL, TokenType::BOOLEAN])
       return consume_literal
     end
 
@@ -69,17 +68,13 @@ class Parser
   end
 
   def consume_literal
-    if consume_tokens_if_match(TokenType::STRING)
+    if consume_tokens_if_match([TokenType::STRING, TokenType::NUMBER, TokenType::NULL, TokenType::BOOLEAN])
       value = previous_token.literal
-      return Node::String.new(value)
+      node_class = previous_token.type.downcase.capitalize
+
+      return Node::Literal.const_get("Node::#{node_class}").new(value)
     end
 
-    if consume_tokens_if_match(TokenType::NUMBER)
-      value = previous_token.literal
-      return Node::Number.new(value)
-    end
-
-    binding.irb
     raise "Expect literal! it is #{current_token.type}, #{current_token.literal}"
   end
 
