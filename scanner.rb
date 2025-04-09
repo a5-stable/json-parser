@@ -75,12 +75,26 @@ class Scanner
   end
 
   def consume_number
+    if fetch_current_letter == '-'
+      @current_index += 1
+    end
+
     while is_number?(fetch_current_letter)
       @current_index += 1
     end
 
+    if fetch_current_letter == '.'
+      @current_index += 1
+      
+      while is_number?(fetch_current_letter)
+        @current_index += 1
+      end
+    end
+
     literal = fetch_substring(start_index, current_index)
-    add_token(TokenType::NUMBER, literal: literal.to_i)
+
+    literal = fetch_substring(start_index, current_index)
+    add_token(TokenType::NUMBER, literal: literal.to_f)
   end
 
   TOKEN_NULL_STRING = "null"
@@ -115,7 +129,7 @@ class Scanner
   end
 
   def is_number?(str)
-    str =~ /^[0-9]+$/ ? true : false
+    str =~ /^[-0-9.]$/ ? true : false
   end
 
   def is_alphabet?(str)
