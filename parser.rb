@@ -19,16 +19,18 @@ class Parser
 
   def consume_json_expression
     pairs = []
-    
+
     if (consume_tokens_if_match(TokenType::LEFT_BRACKET))
-      while !next_token.nil? && !(next_token.type == TokenType::RIGHT_BRACKET)
+      while is_json_expression_continuing?
         pairs << consume_pair
 
-        if !next_token.nil?
-          unless consume_tokens_if_match(TokenType::COMMA)
-            raise "Expect Comma!"
-          end
+        if !match_without_consume(TokenType::COMMA) && is_json_expression_continuing?
+          binding.irb
+          raise "Expect COMMA!"
+        else
+          consume_tokens_if_match(TokenType::COMMA)
         end
+
       end
 
       consume_tokens_if_match(TokenType::RIGHT_BRACKET)
@@ -60,7 +62,7 @@ class Parser
       return consume_literal
     end
 
-    raise "Expression Expected!"
+    raise "Expression Expected!, it is #{current_token.type}, #{current_token.literal}"
   end
 
   def consume_array
@@ -77,7 +79,8 @@ class Parser
       return Node::Number.new(value)
     end
 
-    raise "Expect Expression!"
+    binding.irb
+    raise "Expect literal! it is #{current_token.type}, #{current_token.literal}"
   end
 
   private
@@ -115,6 +118,10 @@ class Parser
 
   def next_token
     tokens[current_index + 1]
+  end
+
+  def is_json_expression_continuing?
+    !next_token.nil? && !match_without_consume(TokenType::RIGHT_BRACKET)
   end
 end
 
