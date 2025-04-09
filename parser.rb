@@ -25,7 +25,7 @@ class Parser
         pairs << consume_pair
 
         if !match_without_consume(TokenType::COMMA) && is_json_expression_continuing?
-          raise "Expect COMMA!"
+          raise "Expect COMMA!, current_token: #{current_token.type}, #{current_token.literal}"
         else
           consume_tokens_if_match(TokenType::COMMA)
         end
@@ -57,6 +57,10 @@ class Parser
       return consume_json_expression
     end
 
+    if match_without_consume(TokenType::LEFT_ARRAY)
+      return consume_array
+    end
+
     if match_without_consume([TokenType::STRING, TokenType::NUMBER, TokenType::NULL, TokenType::BOOLEAN])
       return consume_literal
     end
@@ -65,6 +69,22 @@ class Parser
   end
 
   def consume_array
+    consume_tokens_if_match([TokenType::LEFT_ARRAY])
+    elements = []
+
+    while !match_without_consume([TokenType::RIGHT_ARRAY])
+      elements << consume_json_value
+
+      if !match_without_consume([TokenType::COMMA]) && !next_token.type == TokenType::RIGHT_ARRAY
+        raise "Expect COMMA between array elements!"
+      else
+        consume_tokens_if_match([TokenType::COMMA])
+      end
+    end
+
+    consume_tokens_if_match([TokenType::RIGHT_ARRAY])
+
+    Node::Array.new(elements)
   end
 
   def consume_literal

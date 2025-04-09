@@ -35,6 +35,10 @@ class Scanner
       add_token(TokenType::COLON)
     when ","
       add_token(TokenType::COMMA)
+    when "["
+      add_token(TokenType::LEFT_ARRAY)
+    when "]"
+      add_token(TokenType::RIGHT_ARRAY)
     when " "
     when '"'
       consume_string
