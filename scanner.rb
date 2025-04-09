@@ -92,8 +92,6 @@ class Scanner
     end
 
     literal = fetch_substring(start_index, current_index)
-
-    literal = fetch_substring(start_index, current_index)
     add_token(TokenType::NUMBER, literal: literal.to_f)
   end
 
