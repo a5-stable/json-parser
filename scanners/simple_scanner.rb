@@ -1,7 +1,7 @@
-require_relative "token_type"
-require_relative "token"
+require_relative "../token_type"
+require_relative "../token"
 
-class Scanner
+class SimpleScanner
   include TokenType
   attr_accessor :json_string, :tokens, :current_index, :start_index
 
@@ -95,15 +95,15 @@ class Scanner
     add_token(TokenType::NUMBER, literal: literal.to_f)
   end
 
-  TOKEN_NULL_STRING = "null"
-  TOKEN_TRUE_STRING = "true"
-  TOKEN_FALSE_STRING = "false"
+  TOKEN_NULL = :null
+  TOKEN_TRUE = :true
+  TOKEN_FALSE = :false
   def consume_identifier
     while is_alphabet?(fetch_current_letter)
       @current_index += 1
     end
 
-    literal = fetch_substring(start_index, current_index)
+    literal = fetch_substring(start_index, current_index).to_sym
 
     case literal
     when TOKEN_NULL_STRING

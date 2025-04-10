@@ -1,11 +1,11 @@
-require_relative "nodes/array"
-require_relative "nodes/json_expression"
-require_relative "nodes/pair"
-require_relative "nodes/literal"
-require_relative "token"
-require_relative "token_type"
+require_relative "../nodes/array"
+require_relative "../nodes/json_expression"
+require_relative "../nodes/pair"
+require_relative "../nodes/literal"
+require_relative "../token"
+require_relative "../token_type"
 
-class Parser
+class SimpleParser
   attr_accessor :tokens, :current_index
 
   def initialize(tokens)
